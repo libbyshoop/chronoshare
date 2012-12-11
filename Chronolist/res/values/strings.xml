@@ -3,12 +3,16 @@
     <string name="app_name">Chronolist</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_time_period">Settings</string>
     <string name ="messages">Messages</string>
     <string name = "read">Read more</string>
     <string name = "pictures">Pictures</string>
     <string name = "appointments">Appointments</string>
     <string name = "view">View more</string>
-    <string name = "calls">Calls</string>
-     
+    <string name="txtStartDate">Start:</string>
+    <string name="txtEndDate">End:</string>
+    <string name="btnChangeDate">Edit</string>
+    <string name="txtTitleTimePeriod">Change Time Period</string>
+    <string name="calls">Calls</string>
 
 </resources>

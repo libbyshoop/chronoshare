@@ -24,10 +24,12 @@ public class CallFetcher {
 		Uri uri = android.provider.CallLog.Calls.CONTENT_URI;
 		Cursor c = context.getContentResolver().query(uri, null, null, null, null);
 		long nextday = daystart + DateUtils.DAY_IN_MILLIS;
+		if (c.getCount() == 0){
+			return null;
+		}
 		String[] calls = new String[c.getCount()];
 		calls[0] = "to be replaced";
 		long recent = 0;
-		
 		if(c.moveToFirst()){
 			
 	        for(int i=0 ; i < c.getCount();  i++){

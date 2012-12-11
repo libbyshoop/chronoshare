@@ -10,8 +10,10 @@ import parser.chronolist.Day;
 import parser.chronolist.DayAdapter;
 import parser.chronolist.Message;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.widget.ListView;
 import fetchers.chronolist.CalendarFetcher;
@@ -25,31 +27,38 @@ public class Timeline extends Activity {
 	
 	private ListView listView1; //listView 1 holds all the panels
 	public static long oneday = 86400000; //the number of milliseconds in a day
-	Calendar c = Calendar.getInstance(); //makes an calendar
+	Calendar c = Calendar.getInstance(); //makes a calendar
+	
+	/**
+	 * Simple Dialog used to show the splash screen
+	 */
+	protected Dialog mSplashDialog;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.list_row); //sets content view to list_row so any references to xml stuff works
-		
-		//number of panels to generate; hard programmed number will be replaced by
-		//computed number when date picker is up and running
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    
+        setContentView(R.layout.activity_timeline);       
+        
+        //number of panels to generate; hard programmed number will be replaced by
+	    //computed number when date picker is up and running
 		Day[] daylist = new Day[15]; 
 		
 		TextFetcher texts = new TextFetcher(this); //calls date fetcher with CONTEXT
+
+
 		Message[] messlist = new Message[texts.body.length]; //makes list of messages
 		for(int i = 0; i < messlist.length; i++){
-			messlist[i] = new Message(texts.senders[i], texts.body[i], texts.time[i]);
+		messlist[i] = new Message(texts.senders[i], texts.body[i], texts.time[i]);
 		}
-		
 		//we do this OUTSIDE of the fetcher because of the number of messages usually on the device
 		//the other data types usually have far less instances, so cycling through them through each
 		//date doesn't take very long. This is not true of messages. And since messages are stored 
 		//chronologically, we can keep track of a position where we last retrieved a message
-		//and only have to cycle though all the messages once. 
+		//and only have to cycle through all the messages once. 
 	
 		int messpos = 0; //keep track of the last retrieved message
-		
+
 		for(int i = 0; i < 15; i++){ //for each panel
 			
 			long mildate = getStart() - oneday*i; //the start of the day of the midnight in milliseconds
@@ -57,28 +66,33 @@ public class Timeline extends Activity {
 			String dateString = formatter.format(new Date(mildate)); //string represent of mildate
 			
 			//gets a vector of messages received on that day
-			Vector<Message> tmp = populateMessages(this, mildate, messpos, messlist); 
+			Vector<Message> tmp = populateMessages(this, mildate, messpos, messlist);
+			if (!tmp.isEmpty()){
 			messpos += tmp.size(); //increases messpos based off of how messages were read
-			Message[] messport = new Message[tmp.size()]; //makes array equal to size of vector
-			tmp.copyInto(messport); //copies vector into array
-			tmp.clear(); //clears vector just in case
+			}else{
+				messpos += 0;
+			}
 			
+			Message[] messport = new Message[tmp.size()]; //makes array equal to size of vector
+			if (!tmp.isEmpty()){
+			tmp.copyInto(messport); //copies vector into array
+			}
+			tmp.clear(); //clears vector just in case
 			CalendarFetcher appointments = new CalendarFetcher(this, mildate); //gets appointments
 			ImageFetcher images = new ImageFetcher(this, mildate); //gets images
 			CallFetcher calls = new CallFetcher(this, mildate); //gets calls
 
 			//makes new day with all the information just retrieved
 			daylist[i] = new Day(dateString, messport, images.photos, appointments.appointment, calls.calls);
-		}
+			}
 		
-		setContentView(R.layout.activity_timeline); //sets content view to the list 
-		
-		DayAdapter adapter = new DayAdapter(this, R.layout.list_row, daylist); //adapts the list of day to put into panels
-		
+		DayAdapter adapter = new DayAdapter(this, R.layout.list_row, daylist);
+	
 		listView1 = (ListView)findViewById(R.id.listView1);
 		
-		listView1.setAdapter(adapter);	
-	}
+		listView1.setAdapter(adapter);
+    }
+
 	
 	//makes the setting button. We'll need to add/alter this code
 	@Override
@@ -99,13 +113,12 @@ public class Timeline extends Activity {
 		
 	}
 	
-	//gets all the messages from messlist from the inputted day
+	//gets all the messages from messlist from the inputed day
 	public static Vector<Message> populateMessages(Context context, long mildate, int messpos, Message[] messlist){
-
 		Vector<Message> tmp = new Vector<Message>();
 		boolean durday = true;
 		
-		while(durday == true){ //while we're still in the day we're looking at
+		while(durday == true && messlist.length != 0){ //while we're still in the day we're looking at
 			long timerec = Long.valueOf(messlist[messpos].time); //convert the time at position
 			
 			if(timerec > mildate){

@@ -12,7 +12,7 @@ import android.text.format.DateUtils;
 
 public class CalendarFetcher{
 	
-	public long lDate; //midnight in miilliseconds
+	public long lDate; //midnight in milliseconds
 	public String appointment; //string of appointment
 	
 	public CalendarFetcher(Context context, long lDate){

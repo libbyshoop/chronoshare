@@ -32,7 +32,9 @@
     <activity android:name="fetchers.chronolist.TextFetcher"
         android:theme="@android:style/Theme.NoDisplay"></activity>
            
-        
+    <activity
+            android:name="datepicker.chronolist.DatePicker"
+            android:label="@string/app_name"> </activity>
         
     </application>
     

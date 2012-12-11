@@ -4,5 +4,11 @@
         android:id="@+id/menu_settings"
         android:orderInCategory="100"
         android:title="@string/menu_settings"/>
+    
+    <item
+        android:id="@+id/btnSetTimePeriod"
+        android:orderInCategory="100"
+        android:title="@string/menu_time_period"/>
+    
 
 </menu>
