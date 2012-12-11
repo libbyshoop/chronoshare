@@ -12,10 +12,12 @@ import parser.chronolist.Message;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
+import datepicker.chronolist.DatePickers;
 import fetchers.chronolist.CalendarFetcher;
 import fetchers.chronolist.CallFetcher;
 import fetchers.chronolist.ImageFetcher;
@@ -102,6 +104,20 @@ public class Timeline extends Activity {
 		return true;
 	}
 	
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.btnSetTimePeriod:
+	        Intent myIntent = new Intent(this,DatePickers.class);
+//	        EditText editText = (EditText) findViewById(R.id.edit_message);
+//			String message = editText.getText().toString();
+//			intent.putExtra(EXTRA_MESSAGE, message); TO BE REPLACED WITH THE DATE, THOUGHT YOU'D HAVE A BETTER IDEA ON WHAT TO GRAB
+	        startActivity(myIntent);
+	        return true;
+	    default:
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
+	
 	//method gets the start of the current day in milliseconds
 	public static long getStart(){
 		
@@ -133,11 +149,8 @@ public class Timeline extends Activity {
 		}
 		
 		return tmp;
-		
-		
-		
-		
 	}
+	
 }
 
 	

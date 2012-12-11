@@ -42,7 +42,7 @@ public final class R {
     }
     public static final class layout {
         public static final int activity_timeline=0x7f030000;
-        public static final int date_picker=0x7f030001;
+        public static final int date_pickers=0x7f030001;
         public static final int list_row=0x7f030002;
     }
     public static final class menu {
