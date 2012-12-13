@@ -14,5 +14,7 @@
     <string name="btnChangeDate">Edit</string>
     <string name="txtTitleTimePeriod">Change Time Period</string>
     <string name="calls">Calls</string>
+    <string name="btnSubmit">Submit</string>
+    <string name="btnCancel">Cancel</string>
 
 </resources>

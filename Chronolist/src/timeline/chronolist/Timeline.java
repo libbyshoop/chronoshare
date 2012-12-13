@@ -29,7 +29,8 @@ public class Timeline extends Activity {
 	
 	private ListView listView1; //listView 1 holds all the panels
 	public static long oneday = 86400000; //the number of milliseconds in a day
-	Calendar c = Calendar.getInstance(); //makes a calendar
+	public static long c = getStart(Calendar.getInstance()); //makes a calendar
+	public static int dur = 15;
 	
 	/**
 	 * Simple Dialog used to show the splash screen
@@ -39,12 +40,20 @@ public class Timeline extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    
-        setContentView(R.layout.activity_timeline);       
+        setContentView(R.layout.activity_timeline);
         
+        Intent intent = getIntent();
+	        if (intent.getExtras() != null){
+	        	Bundle b = intent.getExtras();
+		        if (b.getInt("dur") != 0){
+		        	dur = b.getInt("dur");
+		        	c = b.getLong("day");
+		        }
+        }
+
         //number of panels to generate; hard programmed number will be replaced by
 	    //computed number when date picker is up and running
-		Day[] daylist = new Day[15]; 
+		Day[] daylist = new Day[dur]; 
 		
 		TextFetcher texts = new TextFetcher(this); //calls date fetcher with CONTEXT
 
@@ -61,9 +70,9 @@ public class Timeline extends Activity {
 	
 		int messpos = 0; //keep track of the last retrieved message
 
-		for(int i = 0; i < 15; i++){ //for each panel
+		for(int i = 0; i < dur; i++){ //for each panel
 			
-			long mildate = getStart() - oneday*i; //the start of the day of the midnight in milliseconds
+			long mildate = c - oneday*i; //the start of the day of the midnight in milliseconds
 			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy"); 
 			String dateString = formatter.format(new Date(mildate)); //string represent of mildate
 			
@@ -107,11 +116,16 @@ public class Timeline extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.btnSetTimePeriod:
-	        Intent myIntent = new Intent(this,DatePickers.class);
-//	        EditText editText = (EditText) findViewById(R.id.edit_message);
-//			String message = editText.getText().toString();
-//			intent.putExtra(EXTRA_MESSAGE, message); TO BE REPLACED WITH THE DATE, THOUGHT YOU'D HAVE A BETTER IDEA ON WHAT TO GRAB
-	        startActivity(myIntent);
+	        Intent intent = new Intent(this,DatePickers.class);
+	        
+	        
+	        /** setting the textVal in intentExtra */
+	        /** passing string */
+	        Bundle b = new Bundle();
+	        b.putInt("dur", dur);
+	        b.putLong("day", c);
+	        intent.putExtras(b);
+	        startActivity(intent);
 	        return true;
 	    default:
 	        return super.onOptionsItemSelected(item);
@@ -119,15 +133,13 @@ public class Timeline extends Activity {
 	}
 	
 	//method gets the start of the current day in milliseconds
-	public static long getStart(){
-		
-		Calendar rightNow = Calendar.getInstance();
+	public static long getStart(Calendar rightNow){
 		long offset = rightNow.get(Calendar.ZONE_OFFSET) + rightNow.get(Calendar.DST_OFFSET);
 	    long sinceMidnight = (rightNow.getTimeInMillis() + offset) % (24 * 60 * 60 * 1000);
 	    long dayStart = rightNow.getTimeInMillis() - sinceMidnight;
 	    return dayStart;
-		
 	}
+	
 	
 	//gets all the messages from messlist from the inputed day
 	public static Vector<Message> populateMessages(Context context, long mildate, int messpos, Message[] messlist){
@@ -151,6 +163,5 @@ public class Timeline extends Activity {
 		return tmp;
 	}
 	
-}
 
-	
+}
